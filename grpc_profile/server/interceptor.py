@@ -1,6 +1,7 @@
 import time
 from cProfile import Profile
-from typing import Callable, Tuple, Optional
+from timeit import default_timer
+from typing import Callable, Optional, Tuple
 
 import grpc
 from grpc import HandlerCallDetails, ServerInterceptor
@@ -27,7 +28,7 @@ class ProfileInterceptor(ServerInterceptor):
         def profile_wrapper(behavior):
             def new_behavior(request_or_iterator, servicer_context):
                 profile = Profile()
-                start = time.time()
+                start = default_timer()
                 profile.enable()
 
                 try:
@@ -37,7 +38,7 @@ class ProfileInterceptor(ServerInterceptor):
                     )
                 finally:
                     profile.disable()
-                    elapsed = time.time() - start
+                    elapsed = default_timer() - start
                     filename = self.filename_format.format(
                         service=grpc_service_name,
                         method=grpc_method_name,
