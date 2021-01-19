@@ -5,8 +5,7 @@ from concurrent import futures
 import grpc
 from example.echo.echo_pb2 import EchoMessage
 from example.echo.echo_pb2_grpc import EchoServicer, add_EchoServicer_to_server
-
-from grpc_profile.server.interceptor import ProfileInterceptor
+from py_grpc_profile.server.interceptor import ProfileInterceptor
 
 
 class EchoService(EchoServicer):

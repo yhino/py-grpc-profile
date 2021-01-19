@@ -23,7 +23,7 @@ lint: clean
 
 test: clean
 	@poetry run pytest --verbose \
-		--cov=grpc_profile \
+		--cov=py_grpc_profile \
 		--cov-report=term \
 		--cov-report=xml \
 		--cov-report=html \
