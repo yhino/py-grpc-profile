@@ -5,4 +5,7 @@ PROTO_FILES = $(shell find $(PROTO_DIR) -type f -name '*.proto')
 
 .PHONY: grpc
 grpc:
-	poetry run python -m grpc_tools.protoc -I $(PROTO_DIR) --python_out=$(GRPC_OUTPUT) --grpc_python_out=$(GRPC_OUTPUT) $(PROTO_FILES)
+	@poetry run python -m grpc_tools.protoc -I $(PROTO_DIR) --python_out=$(GRPC_OUTPUT) --grpc_python_out=$(GRPC_OUTPUT) $(PROTO_FILES)
+
+clean:
+	@find $(GRPC_OUTPUT) -type f -name '*_pb2*.py' -exec rm -rf {} +
