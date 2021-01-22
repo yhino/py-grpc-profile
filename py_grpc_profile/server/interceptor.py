@@ -4,10 +4,9 @@ from timeit import default_timer
 from typing import Callable, Optional, Tuple
 
 import grpc
-from grpc import HandlerCallDetails, ServerInterceptor
 
 
-class ProfileInterceptor(ServerInterceptor):
+class ProfileInterceptor(grpc.ServerInterceptor):
     DEFAULT_FILENAME_FORMAT = (
         "grpc-server-{service}-{method}-{elapsed:.0f}ms-{time:.0f}.prof"
     )
@@ -21,8 +20,10 @@ class ProfileInterceptor(ServerInterceptor):
         )
 
     def intercept_service(
-        self, continuation: Callable, handler_call_details: HandlerCallDetails
-    ):
+        self,
+        continuation: Callable[[grpc.HandlerCallDetails], grpc.RpcMethodHandler],
+        handler_call_details: grpc.HandlerCallDetails,
+    ) -> grpc.RpcMethodHandler:
         grpc_service_name, grpc_method_name = split_method_call(handler_call_details)
 
         def profile_wrapper(behavior):
@@ -53,7 +54,7 @@ class ProfileInterceptor(ServerInterceptor):
         return wrap_rpc_handler(continuation(handler_call_details), profile_wrapper)
 
 
-def split_method_call(handler_call_details: HandlerCallDetails) -> Tuple[str, str]:
+def split_method_call(handler_call_details: grpc.HandlerCallDetails) -> Tuple[str, str]:
     parts = handler_call_details.method.split("/")
     if len(parts) < 3:
         return "", ""
@@ -61,7 +62,10 @@ def split_method_call(handler_call_details: HandlerCallDetails) -> Tuple[str, st
     return grpc_service_name, grpc_method_name
 
 
-def wrap_rpc_handler(handler, fn):
+def wrap_rpc_handler(
+    handler: grpc.RpcMethodHandler,
+    wrapper_fn: Callable,
+):
     if handler is None:
         return None
 
@@ -79,7 +83,7 @@ def wrap_rpc_handler(handler, fn):
         handler_factory = grpc.unary_unary_rpc_method_handler
 
     return handler_factory(
-        behavior=fn(behavior_fn),
+        behavior=wrapper_fn(behavior_fn),
         request_deserializer=handler.request_deserializer,
         response_serializer=handler.response_serializer,
     )
