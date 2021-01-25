@@ -29,5 +29,5 @@ def serve():
 
 
 if __name__ == "__main__":
-    logging.basicConfig()
+    logging.basicConfig(level=logging.INFO)
     serve()

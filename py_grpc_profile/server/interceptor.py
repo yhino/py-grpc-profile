@@ -1,57 +1,44 @@
-import time
-from cProfile import Profile
-from timeit import default_timer
 from typing import Callable, Optional, Tuple
 
 import grpc
 
+from py_grpc_profile.adapter import CProfileAdapter
+
 
 class ProfileInterceptor(grpc.ServerInterceptor):
-    DEFAULT_FILENAME_FORMAT = (
-        "grpc-server-{service}-{method}-{elapsed:.0f}ms-{time:.0f}.prof"
-    )
-
-    def __init__(
-        self,
-        filename_format: Optional[str] = None,
-    ):
-        self.filename_format = (
-            self.DEFAULT_FILENAME_FORMAT if filename_format is None else filename_format
-        )
+    def __init__(self, profiler: Optional[CProfileAdapter] = None):
+        if profiler is None:
+            profiler = CProfileAdapter()
+        self.profiler = profiler
 
     def intercept_service(
         self,
         continuation: Callable[[grpc.HandlerCallDetails], grpc.RpcMethodHandler],
         handler_call_details: grpc.HandlerCallDetails,
     ) -> grpc.RpcMethodHandler:
-        grpc_service_name, grpc_method_name = split_method_call(handler_call_details)
+        handler = continuation(handler_call_details)
+        behavior, handler_factory = get_rcp_handler(handler)
 
-        def profile_wrapper(behavior):
-            def new_behavior(request_or_iterator, servicer_context):
-                profile = Profile()
-                start = default_timer()
-                profile.enable()
+        def _intercept(request_or_iterator, servicer_context):
+            grpc_service_name, grpc_method_name = split_method_call(
+                handler_call_details
+            )
 
-                try:
-                    response_or_iterator = behavior(
-                        request_or_iterator,
-                        servicer_context,
-                    )
-                finally:
-                    profile.disable()
-                    elapsed = default_timer() - start
-                    filename = self.filename_format.format(
-                        service=grpc_service_name,
-                        method=grpc_method_name,
-                        elapsed=elapsed * 1000.0,
-                        time=time.time(),
-                    )
-                    profile.dump_stats(filename)
-                return response_or_iterator
+            return self.profiler.run(
+                behavior,
+                request_or_iterator,
+                servicer_context,
+                {
+                    "grpc_service_name": grpc_service_name,
+                    "grpc_method_name": grpc_method_name,
+                },
+            )
 
-            return new_behavior
-
-        return wrap_rpc_handler(continuation(handler_call_details), profile_wrapper)
+        return handler_factory(
+            behavior=_intercept,
+            request_deserializer=handler.request_deserializer,
+            response_serializer=handler.response_serializer,
+        )
 
 
 def split_method_call(handler_call_details: grpc.HandlerCallDetails) -> Tuple[str, str]:
@@ -62,10 +49,7 @@ def split_method_call(handler_call_details: grpc.HandlerCallDetails) -> Tuple[st
     return grpc_service_name, grpc_method_name
 
 
-def wrap_rpc_handler(
-    handler: grpc.RpcMethodHandler,
-    wrapper_fn: Callable,
-):
+def get_rcp_handler(handler: grpc.RpcMethodHandler):
     if handler is None:
         return None
 
@@ -82,8 +66,4 @@ def wrap_rpc_handler(
         behavior_fn = handler.unary_unary
         handler_factory = grpc.unary_unary_rpc_method_handler
 
-    return handler_factory(
-        behavior=wrapper_fn(behavior_fn),
-        request_deserializer=handler.request_deserializer,
-        response_serializer=handler.response_serializer,
-    )
+    return behavior_fn, handler_factory
