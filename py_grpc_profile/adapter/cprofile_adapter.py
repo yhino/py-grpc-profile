@@ -3,8 +3,10 @@ from cProfile import Profile
 from timeit import default_timer
 from typing import Dict, Optional
 
+from py_grpc_profile.adapter.interfaces import Adapter
 
-class CProfileAdapter:
+
+class CProfileAdapter(Adapter):
     DEFAULT_FILENAME_FORMAT = (
         "grpc-server-{service}-{method}-{elapsed:.0f}ms-{time:.0f}.prof"
     )

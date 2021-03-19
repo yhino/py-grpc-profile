@@ -2,11 +2,11 @@ from typing import Callable, Optional, Tuple
 
 import grpc
 
-from py_grpc_profile.adapter import CProfileAdapter
+from py_grpc_profile.adapter import Adapter, CProfileAdapter
 
 
 class ProfileInterceptor(grpc.ServerInterceptor):
-    def __init__(self, profiler: Optional[CProfileAdapter] = None):
+    def __init__(self, profiler: Optional[Adapter] = None):
         if profiler is None:
             profiler = CProfileAdapter()
         self.profiler = profiler

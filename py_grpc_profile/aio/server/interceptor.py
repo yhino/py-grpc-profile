@@ -2,12 +2,12 @@ from typing import Awaitable, Callable, Optional
 
 import grpc
 
-from py_grpc_profile.adapter import CProfileAdapter
+from py_grpc_profile.adapter import Adapter, CProfileAdapter
 from py_grpc_profile.server.interceptor import get_rcp_handler, split_method_call
 
 
 class ProfileInterceptor(grpc.aio.ServerInterceptor):
-    def __init__(self, profiler: Optional[CProfileAdapter] = None):
+    def __init__(self, profiler: Optional[Adapter] = None):
         if profiler is None:
             profiler = CProfileAdapter()
         self.profiler = profiler
