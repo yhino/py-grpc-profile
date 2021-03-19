@@ -35,7 +35,7 @@ server = grpc.server(
 # ...
 ```
 
-The complete code is available in [example](example). You can find more details there.
+The complete code is available in [example](https://github.com/yhino/py-grpc-profile/tree/main/example). You can find more details there.
 
 ## License
 
