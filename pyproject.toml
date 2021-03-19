@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "py-grpc-profile"
-version = "0.1.0"
-description = "profile for gRPC servers"
+version = "0.1.1"
+description = "profile the grpc server"
 authors = ["Yoshiyuki HINO <yhinoz@gmail.com>"]
 license = "Apache-2.0"
 
