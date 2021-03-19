@@ -14,7 +14,7 @@ class EchoService(EchoServicer):
         logging.info(f"start: {self.__class__.__name__}")
         time.sleep(1)
         logging.info(f"finish: {self.__class__.__name__}")
-        return EchoMessage(msg=request.msg)
+        return EchoMessage(msg=request.msg.upper())
 
 
 async def serve():
