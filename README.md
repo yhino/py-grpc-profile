@@ -40,3 +40,7 @@ The complete code is available in [example](https://github.com/yhino/py-grpc-pro
 ## License
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fyhino%2Fpy-grpc-profile.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fyhino%2Fpy-grpc-profile?ref=badge_shield)
+
+
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fyhino%2Fpy-grpc-profile.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fyhino%2Fpy-grpc-profile?ref=badge_large)
