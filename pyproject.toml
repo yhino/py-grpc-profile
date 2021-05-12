@@ -25,24 +25,6 @@ mypy = "^0.790"
 grpcio-tools = "^1.34.1"
 snakeviz = "^2.1.0"
 
-[tool.black]
-line-length = 88
-include = '\.pyi?$'
-exclude = '''
-/(
-    \.eggs
-  | \.git
-  | \.hg
-  | \.mypy_cache
-  | \.tox
-  | \.venv
-  | _build
-  | buck-out
-  | build
-  | dist
-)/
-'''
-
 [tool.isort]
 profile = "black"
 src_paths = ["py_grpc_profile", "tests"]
