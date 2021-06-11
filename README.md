@@ -7,6 +7,7 @@ Provide a grpc interceptor to profile each request in the cProfile module.
 <p align="center">
     <a href="https://github.com/yhino/py-grpc-profile/actions/workflows/build.yml"><img src="https://github.com/yhino/py-grpc-profile/actions/workflows/build.yml/badge.svg" alt="build"></a>
     <a href="https://codecov.io/gh/yhino/py-grpc-profile"><img src="https://codecov.io/gh/yhino/py-grpc-profile/branch/main/graph/badge.svg?token=KWABCP5TYT"/></a>
+    <a href="https://pypi.org/project/py-grpc-profile/"><img alt="PyPI - Downloads" src="https://img.shields.io/pypi/dm/py-grpc-profile"></a>
 </p>
 
 ## Installation
