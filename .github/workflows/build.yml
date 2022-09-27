@@ -12,26 +12,29 @@ jobs:
         python-version: [3.7, 3.8]
     steps:
     - uses: actions/checkout@v2
+
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v2
       with:
         python-version: ${{ matrix.python-version }}
+
     - name: Install poetry
       run: |
-        curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python
-        source $HOME/.poetry/env
+        curl -sSL https://install.python-poetry.org | python -
+        echo "$HOME/.local/bin" >> $GITHUB_PATH
+
     - name: Install dependencies
       run: |
-        source $HOME/.poetry/env
         poetry install
+
     - name: Run Linters
       run: |
-        source $HOME/.poetry/env
         make lint
+
     - name: Run Test
       run: |
-        source $HOME/.poetry/env
         make test
+
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v2
       with:
